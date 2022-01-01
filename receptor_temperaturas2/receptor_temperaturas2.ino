@@ -1,19 +1,28 @@
 #include <EasyTransfer.h>
 #include <SPI.h>
-#include <Wire.h>
 #include <Adafruit_GFX.h>
-#include <Adafruit_SSD1306.h>
+#include <Arduino_ST7789_Fast.h>
+#include <SoftwareSerial.h>
 
 //Objeto de transmision de datos serial
 EasyTransfer ET; 
+//END
 
+//GESTION SERIAL
+SoftwareSerial mySerial(8, 9); // RX, TX
+//END
+
+//Pines Trnsmisor RF
 #define M0 5
 #define M1 4
 #define AUX 3
 #define LED 2
 
-#define OLED_RESET 12
-Adafruit_SSD1306 display(OLED_RESET);
+//Pines LCD
+#define TFT_DC    7
+#define TFT_RST   6
+#define SCR_WD   240
+#define SCR_HT   240   // 320 - to allow access to full 240x320 frame buffer
 
 struct RECEIVE_DATA_STRUCTURE{
   int timer;
@@ -26,17 +35,26 @@ RECEIVE_DATA_STRUCTURE mydata;
 
 int failCounter = 0;
 
+//inicializamos el display
+Arduino_ST7789 lcd = Arduino_ST7789(TFT_DC, TFT_RST);
+
+
 void setup(){
   
+  mySerial.begin(9600);
   delay(2000);
   Serial.begin(9600);
 
-  display.begin(SSD1306_SWITCHCAPVCC, 0x3C);  // initialize with the I2C addr 0x3C (for the 128x32)
-  display.display();
+  lcd.init(SCR_WD, SCR_HT);
+  lcd.fillScreen(BLACK);
+  lcd.setCursor(0, 0);
+  lcd.setTextColor(WHITE,BLUE);
+  lcd.setTextSize(3);
+  lcd.println("HELLO WORLD");
+
   delay(2000);
 
-  display.clearDisplay();
-
+  //pines transmisor
   pinMode(M0, OUTPUT);
   pinMode(M1, OUTPUT); 
   pinMode(AUX, INPUT);
@@ -89,47 +107,13 @@ void loop(){
 void setDisplayTemp(void) {
 
   // text display
-  display.setTextSize(2);
-  display.setTextColor(WHITE);
-  display.setCursor(0,0);
-  
-  display.println(mydata.temp, 1);
-  display.setTextSize(1);
-  display.setCursor(47,0);
-  
-  display.println((char) 247);
-  display.setCursor(53,0);
-  display.println('C');
 
-  display.setTextSize(1);
-  display.setCursor(0,22);
-  
-  display.println("Tiempo:");
-  display.setCursor(41,22);
-
-  int minutes = mydata.timer/60;
-
-  display.println(minutes);
-
-  display.setCursor(65,0);
-  display.println("Estacion:");
-  display.setTextSize(2);
-  display.setCursor(65,22);
-  display.println(mydata.station);
-
-  
-  display.display();
 
 }
 
 void setDisplayFail(void) {
 
   // text display
-  display.setTextSize(2);
-  display.setTextColor(WHITE);
-  display.setCursor(0,0);
-  
-  display.println("Sin Datos");
-  display.display();
+
 
 }

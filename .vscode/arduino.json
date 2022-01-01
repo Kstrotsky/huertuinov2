@@ -1,0 +1,6 @@
+{
+    "board": "arduino:avr:nano",
+    "port": "COM7",
+    "sketch": "displayIPS\\displayIPS.ino",
+    "configuration": "cpu=atmega328old"
+}
