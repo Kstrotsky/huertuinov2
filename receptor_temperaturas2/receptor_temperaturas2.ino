@@ -1,11 +1,11 @@
-#include <EasyTransfer.h>
+#include <SoftEasyTransfer.h>
 #include <SPI.h>
 #include <Adafruit_GFX.h>
 #include <Arduino_ST7789_Fast.h>
 #include <SoftwareSerial.h>
 
 //Objeto de transmision de datos serial
-EasyTransfer ET; 
+SoftEasyTransfer ET; 
 //END
 
 //GESTION SERIAL
@@ -43,7 +43,7 @@ void setup(){
   
   mySerial.begin(9600);
   delay(2000);
-  Serial.begin(9600);
+  Serial.begin(115200);
 
   lcd.init(SCR_WD, SCR_HT);
   lcd.fillScreen(BLACK);
@@ -65,8 +65,9 @@ void setup(){
   digitalWrite(M0, LOW);
   digitalWrite(M1, LOW);
   
-  ET.begin(details(mydata), &Serial);
-  
+  ET.begin(details(mydata), &mySerial);
+
+  Serial.println("Iniciado");
 }
 
 void loop(){
@@ -100,7 +101,7 @@ void loop(){
   //you should make this delay shorter then your transmit delay or else messages could be lost
   delay(250);
 
-  display.clearDisplay();
+
   digitalWrite(LED, LOW);
 }
 
