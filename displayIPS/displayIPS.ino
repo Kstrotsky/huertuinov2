@@ -29,8 +29,8 @@ void setup(void)
   lcd.init(SCR_WD, SCR_HT);
   lcd.fillScreen(BLACK);
   lcd.setCursor(0, 0);
-  lcd.setTextColor(WHITE,BLUE);
-  lcd.setTextSize(3);
+  lcd.setTextColor(WHITE);
+  lcd.setTextSize(2);
   lcd.println("HELLO WORLD");
  }
 

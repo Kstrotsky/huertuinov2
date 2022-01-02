@@ -34,6 +34,7 @@ struct RECEIVE_DATA_STRUCTURE{
 RECEIVE_DATA_STRUCTURE mydata;
 
 int failCounter = 0;
+int scroll = 0;
 
 //inicializamos el display
 Arduino_ST7789 lcd = Arduino_ST7789(TFT_DC, TFT_RST);
@@ -48,9 +49,9 @@ void setup(){
   lcd.init(SCR_WD, SCR_HT);
   lcd.fillScreen(BLACK);
   lcd.setCursor(0, 0);
-  lcd.setTextColor(WHITE,BLUE);
-  lcd.setTextSize(3);
-  lcd.println("HELLO WORLD");
+  lcd.setTextColor(WHITE);
+  lcd.setTextSize(2);
+  lcd.println("Iniciando Transmisor");
 
   delay(2000);
 
@@ -66,6 +67,8 @@ void setup(){
   digitalWrite(M1, LOW);
   
   ET.begin(details(mydata), &mySerial);
+
+  lcd.println("Transmisor iniciado");
 
   Serial.println("Iniciado");
 }
@@ -108,6 +111,12 @@ void loop(){
 void setDisplayTemp(void) {
 
   // text display
+  lcd.fillScreen(BLACK);
+  lcd.setCursor(0, 0);
+  lcd.print("Temperatura = ");
+  lcd.println(mydata.temp);
+  lcd.print("Tiempo F = " );
+  lcd.println(mydata.timer);
 
 
 }
@@ -115,6 +124,8 @@ void setDisplayTemp(void) {
 void setDisplayFail(void) {
 
   // text display
-
+  lcd.fillScreen(BLACK);
+  lcd.setCursor(0, 0);
+  lcd.println("Sin datos");
 
 }
