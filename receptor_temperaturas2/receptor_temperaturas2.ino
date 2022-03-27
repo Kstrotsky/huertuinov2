@@ -24,6 +24,12 @@ SoftwareSerial mySerial(8, 9); // RX, TX
 #define SCR_WD   240
 #define SCR_HT   240   // 320 - to allow access to full 240x320 frame buffer
 
+//Pines botones
+#define key1 A2 //connect wire 1 to pin 2
+#define key2 A3 //connect wire 2 to pin 3
+#define key3 A4 //connect wire 3 to pin 4
+#define key4 A5 //connect wire 4 to pin 5
+
 struct RECEIVE_DATA_STRUCTURE{
   int timer;
   float temp;
@@ -65,6 +71,12 @@ void setup(){
   // mode 0
   digitalWrite(M0, LOW);
   digitalWrite(M1, LOW);
+
+  // Botones mando
+  pinMode(key1, INPUT_PULLUP);
+  pinMode(key2, INPUT_PULLUP);
+  pinMode(key3, INPUT_PULLUP);
+  pinMode(key4, INPUT_PULLUP);
   
   ET.begin(details(mydata), &mySerial);
 
