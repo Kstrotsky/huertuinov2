@@ -25,10 +25,10 @@ SoftwareSerial mySerial(8, 9); // RX, TX
 #define SCR_HT   240   // 320 - to allow access to full 240x320 frame buffer
 
 //Pines botones
-#define key1 A2 //connect wire 1 to pin 2
-#define key2 A3 //connect wire 2 to pin 3
-#define key3 A4 //connect wire 3 to pin 4
-#define key4 A5 //connect wire 4 to pin 5
+#define key1 A3 //Boton 1
+#define key2 A2 //Boton 2
+#define key3 A5 //Boton 3
+#define key4 A4 //Boton 4
 
 struct RECEIVE_DATA_STRUCTURE{
   int timer;
@@ -112,6 +112,8 @@ void loop(){
       }
     
   }
+
+  getButtonPress();
   
   //you should make this delay shorter then your transmit delay or else messages could be lost
   delay(250);
@@ -123,7 +125,7 @@ void loop(){
 void setDisplayTemp(void) {
 
   // text display
-  lcd.fillScreen(BLACK);
+  lcd.print("");
   lcd.setCursor(0, 0);
   lcd.print("Temperatura = ");
   lcd.println(mydata.temp);
@@ -139,5 +141,20 @@ void setDisplayFail(void) {
   lcd.fillScreen(BLACK);
   lcd.setCursor(0, 0);
   lcd.println("Sin datos");
+
+}
+
+void getButtonPress(void) {
+
+  // Pulsar boton
+  int buttonState1 = digitalRead(key1);
+  int buttonState2 = digitalRead(key2);
+  int buttonState3 = digitalRead(key3);
+  int buttonState4 = digitalRead(key4);
+
+  Serial.println(buttonState1);
+  Serial.println(buttonState2);
+  Serial.println(buttonState3);
+  Serial.println(buttonState4);
 
 }
