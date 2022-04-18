@@ -30,13 +30,16 @@ SoftwareSerial mySerial(8, 9); // RX, TX
 #define key3 A5 //Boton 3
 #define key4 A4 //Boton 4
 
+//Posicion menu
+int menuPosition = 0;
+
+//Estructura recepcion datos
 struct RECEIVE_DATA_STRUCTURE{
   int timer;
   float temp;
   int station; 
 };
 
-//give a name to the group of data
 RECEIVE_DATA_STRUCTURE mydata;
 
 int failCounter = 0;
@@ -45,12 +48,11 @@ int scroll = 0;
 //inicializamos el display
 Arduino_ST7789 lcd = Arduino_ST7789(TFT_DC, TFT_RST);
 
-
 void setup(){
   
   mySerial.begin(9600);
-  delay(2000);
   Serial.begin(115200);
+  delay(3000);
 
   lcd.init(SCR_WD, SCR_HT);
   lcd.fillScreen(BLACK);
@@ -83,20 +85,16 @@ void setup(){
   lcd.println("Transmisor iniciado");
 
   Serial.println("Iniciado");
+
+  printMenu();
 }
 
 void loop(){
-  //check and see if a data packet has come in. 
+
   if(ET.receiveData()){
 
-      Serial.print("Temperatura = " );
-      Serial.print(mydata.temp);
-      Serial.print("  Tiempo funcionamiento = " );
-      Serial.print(mydata.timer);
-      Serial.println("");
-      
       digitalWrite(LED, HIGH);
-      setDisplayTemp();
+      //setDisplayTemp();
       failCounter = 0;
       
   }
@@ -107,13 +105,13 @@ void loop(){
 
       if (failCounter >= 30) {
         
-        setDisplayFail();
+        //setDisplayFail();
         
       }
     
   }
 
-  getButtonPress();
+  getMenuPosition();
   
   //you should make this delay shorter then your transmit delay or else messages could be lost
   delay(250);
@@ -125,8 +123,10 @@ void loop(){
 void setDisplayTemp(void) {
 
   // text display
-  lcd.print("");
-  lcd.setCursor(0, 0);
+  lcd.writeFillRect(1,1,238,40,WHITE);
+  lcd.setTextColor(BLACK);
+  lcd.setCursor(3, 3);
+  lcd.setTextSize(2);
   lcd.print("Temperatura = ");
   lcd.println(mydata.temp);
   lcd.print("Tiempo F = " );
@@ -138,23 +138,281 @@ void setDisplayTemp(void) {
 void setDisplayFail(void) {
 
   // text display
-  lcd.fillScreen(BLACK);
-  lcd.setCursor(0, 0);
+  lcd.writeFillRect(1,1,238,40,WHITE);
+  lcd.setTextColor(BLACK);
+  lcd.setCursor(3, 3);
+  lcd.setTextSize(2);
   lcd.println("Sin datos");
 
 }
 
-void getButtonPress(void) {
+//Posicion Menu
+void getMenuPosition(void) {
 
-  // Pulsar boton
+  switch (menuPosition) {
+    case 0:
+      getButtonPressMenu();
+    break;
+    case 1:
+       getButtonPressRecepcion();
+    break;
+    case 2:
+       getButtonPressEmision();
+    break;
+    case 3:
+      getButtonPressLog();
+    break;
+    case 4:
+      getButtonPressConfig();
+    break;
+    default:
+      getButtonPressMenu();
+    break;
+  }
+
+}
+
+
+//Menu Principal
+void getButtonPressMenu(void) {
+
   int buttonState1 = digitalRead(key1);
   int buttonState2 = digitalRead(key2);
   int buttonState3 = digitalRead(key3);
   int buttonState4 = digitalRead(key4);
 
-  Serial.println(buttonState1);
-  Serial.println(buttonState2);
-  Serial.println(buttonState3);
-  Serial.println(buttonState4);
+  if (buttonState1 == 0) {
+    printMenuRecepcion();
+  }
+
+  if (buttonState2 == 0) {
+    printMenuEmision();
+  }
+
+  if (buttonState3 == 0) {
+    printMenuLog();
+  }
+
+  if (buttonState4 == 0) {
+    printMenuConfig();
+  }
 
 }
+
+void printMenu(void) {
+
+  menuPosition = 0;
+
+  lcd.writeFillRect(0,0,240,40,WHITE);
+  lcd.writeFillRect(0,40,120,100,RED);
+  lcd.writeFillRect(121,40,120,100,BLUE);
+  lcd.writeFillRect(0,141,120,100,GREEN);
+  lcd.writeFillRect(121,141,120,100,YELLOW);
+  
+  lcd.setTextSize(5);
+  lcd.setTextColor(WHITE);
+  
+  lcd.setCursor(46, 60);
+  lcd.print("1");
+
+  lcd.setCursor(168, 60);
+  lcd.print("2");
+
+  lcd.setCursor(46, 160);
+  lcd.print("3");
+
+  lcd.setCursor(168, 160);
+  lcd.print("4");
+
+  lcd.setTextSize(2);
+  lcd.setCursor(6, 100);
+  lcd.print("RECEPCION");
+
+  lcd.setCursor(140, 100);
+  lcd.print("EMISION");
+
+  lcd.setCursor(41, 200);
+  lcd.print("LOG");
+
+  lcd.setCursor(145, 200);
+  lcd.print("CONFIG");
+
+}
+//END Menu Principal
+
+//Menu Recepcion
+void getButtonPressRecepcion(void) {
+
+  int buttonState1 = digitalRead(key1);
+  int buttonState2 = digitalRead(key2);
+  int buttonState3 = digitalRead(key3);
+  int buttonState4 = digitalRead(key4);
+
+  if (buttonState1 == 0) {
+
+  }
+
+  if (buttonState2 == 0) {
+
+  }
+
+  if (buttonState3 == 0) {
+
+  }
+
+  if (buttonState4 == 0) {
+    printMenu();
+  }
+
+}
+
+void printMenuRecepcion(void) {
+
+  menuPosition = 1;
+
+  lcd.fillScreen(WHITE);
+  lcd.writeFillRect(0,0,240,40,RED);
+
+  lcd.setTextSize(2);
+  lcd.setTextColor(WHITE);
+  
+  lcd.setCursor(5, 13);
+  lcd.print("1 - Recepcion");
+  lcd.setCursor(190, 13);
+  lcd.print("<< 4");
+
+}
+
+//END Recepcion
+
+//Menu Emision
+void getButtonPressEmision(void) {
+
+  int buttonState1 = digitalRead(key1);
+  int buttonState2 = digitalRead(key2);
+  int buttonState3 = digitalRead(key3);
+  int buttonState4 = digitalRead(key4);
+
+  if (buttonState1 == 0) {
+
+  }
+
+  if (buttonState2 == 0) {
+
+  }
+
+  if (buttonState3 == 0) {
+
+  }
+
+  if (buttonState4 == 0) {
+    printMenu();
+  }
+
+}
+
+void printMenuEmision(void) {
+
+  menuPosition = 2;
+
+  lcd.fillScreen(WHITE);
+  lcd.writeFillRect(0,0,240,40,BLUE);
+
+  lcd.setTextSize(2);
+  lcd.setTextColor(WHITE);
+  
+  lcd.setCursor(5, 13);
+  lcd.print("2 - Emision");
+  lcd.setCursor(190, 13);
+  lcd.print("<< 4");
+
+}
+//END Emision
+
+//Menu Log
+void getButtonPressLog(void) {
+
+  int buttonState1 = digitalRead(key1);
+  int buttonState2 = digitalRead(key2);
+  int buttonState3 = digitalRead(key3);
+  int buttonState4 = digitalRead(key4);
+
+  if (buttonState1 == 0) {
+
+  }
+
+  if (buttonState2 == 0) {
+
+  }
+
+  if (buttonState3 == 0) {
+
+  }
+
+  if (buttonState4 == 0) {
+    printMenu();
+  }
+
+}
+
+void printMenuLog(void) {
+
+  menuPosition = 3;
+
+  lcd.fillScreen(WHITE);
+  lcd.writeFillRect(0,0,240,40,GREEN);
+
+  lcd.setTextSize(2);
+  lcd.setTextColor(WHITE);
+  
+  lcd.setCursor(5, 13);
+  lcd.print("3 - Log");
+  lcd.setCursor(190, 13);
+  lcd.print("<< 4");
+
+}
+//END Log
+
+//Menu Config
+void getButtonPressConfig(void) {
+
+  int buttonState1 = digitalRead(key1);
+  int buttonState2 = digitalRead(key2);
+  int buttonState3 = digitalRead(key3);
+  int buttonState4 = digitalRead(key4);
+
+  if (buttonState1 == 0) {
+
+  }
+
+  if (buttonState2 == 0) {
+
+  }
+
+  if (buttonState3 == 0) {
+
+  }
+
+  if (buttonState4 == 0) {
+    printMenu();
+  }
+
+}
+
+void printMenuConfig(void) {
+
+  menuPosition = 4;
+
+  lcd.fillScreen(WHITE);
+  lcd.writeFillRect(0,0,240,40,YELLOW);
+
+  lcd.setTextSize(2);
+  lcd.setTextColor(WHITE);
+  
+  lcd.setCursor(5, 13);
+  lcd.print("4 - Config");
+  lcd.setCursor(190, 13);
+  lcd.print("<< 4");
+
+}
+//END Config
