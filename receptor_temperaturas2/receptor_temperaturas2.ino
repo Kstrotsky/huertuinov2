@@ -43,7 +43,7 @@ struct RECEIVE_DATA_STRUCTURE{
 RECEIVE_DATA_STRUCTURE mydata;
 
 int failCounter = 0;
-int scroll = 0;
+int newData = 0;
 
 //inicializamos el display
 Arduino_ST7789 lcd = Arduino_ST7789(TFT_DC, TFT_RST);
@@ -91,58 +91,28 @@ void setup(){
 
 void loop(){
 
-  if(ET.receiveData()){
-
-      digitalWrite(LED, HIGH);
-      //setDisplayTemp();
-      failCounter = 0;
-      
-  }
-
-  else {
-    
-      failCounter++; 
-
-      if (failCounter >= 30) {
-        
-        //setDisplayFail();
-        
-      }
-    
-  }
+  getRfData();
 
   getMenuPosition();
   
-  //you should make this delay shorter then your transmit delay or else messages could be lost
   delay(250);
-
 
   digitalWrite(LED, LOW);
 }
 
-void setDisplayTemp(void) {
+void getRfData(void) {
 
-  // text display
-  lcd.writeFillRect(1,1,238,40,WHITE);
-  lcd.setTextColor(BLACK);
-  lcd.setCursor(3, 3);
-  lcd.setTextSize(2);
-  lcd.print("Temperatura = ");
-  lcd.println(mydata.temp);
-  lcd.print("Tiempo F = " );
-  lcd.println(mydata.timer);
+  newData = 0;
 
+  if(ET.receiveData()){
+      digitalWrite(LED, HIGH);
+      failCounter = 0;
+      newData = 1;
+  }
 
-}
-
-void setDisplayFail(void) {
-
-  // text display
-  lcd.writeFillRect(1,1,238,40,WHITE);
-  lcd.setTextColor(BLACK);
-  lcd.setCursor(3, 3);
-  lcd.setTextSize(2);
-  lcd.println("Sin datos");
+  else {
+      failCounter++; 
+  }
 
 }
 
@@ -152,6 +122,7 @@ void getMenuPosition(void) {
   switch (menuPosition) {
     case 0:
       getButtonPressMenu();
+      printMenuData();
     break;
     case 1:
        getButtonPressRecepcion();
@@ -238,6 +209,32 @@ void printMenu(void) {
   lcd.print("CONFIG");
 
 }
+
+void printMenuData(void) {
+
+  //Datos barra superior
+  
+  lcd.setTextColor(BLACK);
+  lcd.setCursor(5, 13);
+  lcd.setTextSize(2);
+
+  if (failCounter >= 30) {
+    lcd.writeFillRect(0,0,240,40,WHITE);
+    lcd.print("Sin Datos");
+
+  }
+  else {
+    if (newData == 1){
+      lcd.writeFillRect(0,0,240,40,WHITE);
+      lcd.print("Temp:");
+      lcd.print(mydata.temp);
+      lcd.print(" TF:");
+      lcd.print(mydata.timer);
+    }
+  }
+
+
+}
 //END Menu Principal
 
 //Menu Recepcion
@@ -282,7 +279,6 @@ void printMenuRecepcion(void) {
   lcd.print("<< 4");
 
 }
-
 //END Recepcion
 
 //Menu Emision
